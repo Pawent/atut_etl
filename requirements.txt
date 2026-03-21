@@ -1,0 +1,7 @@
+apache-airflow-providers-amazon
+pandas
+beautifulsoup4
+requests
+sqlalchemy
+psycopg2-binary
+pytest
