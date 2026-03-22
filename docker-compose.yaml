@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   # --- BASE DE DONNÉES (Source Marketing & Airflow) ---
   postgres:
@@ -33,7 +35,8 @@ services:
       - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
       - AIRFLOW__CORE__EXECUTOR=LocalExecutor
       - AIRFLOW__CORE__LOAD_EXAMPLES=False
-      - _PIP_ADDITIONAL_REQUIREMENTS=pandas beautifulsoup4 requests sqlalchemy psycopg2-binary
+      # AJOUT DE PYTEST ET PYTEST-COV ICI
+      - _PIP_ADDITIONAL_REQUIREMENTS=pandas beautifulsoup4 requests sqlalchemy psycopg2-binary pytest pytest-cov
     ports:
       - "8080:8080"
     volumes:
@@ -41,6 +44,7 @@ services:
       - ./logs:/opt/airflow/logs
       - ./plugins:/opt/airflow/plugins
       - ./scripts:/opt/airflow/scripts
+      - ./tests:/opt/airflow/tests  # <--- LE PONT POUR TES TESTS
     command: webserver
 
   # --- PLANIFICATEUR (Airflow Scheduler) ---
@@ -51,12 +55,13 @@ services:
     environment:
       - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
       - AIRFLOW__CORE__EXECUTOR=LocalExecutor
-      - _PIP_ADDITIONAL_REQUIREMENTS=pandas beautifulsoup4 requests sqlalchemy psycopg2-binary
+      - _PIP_ADDITIONAL_REQUIREMENTS=pandas beautifulsoup4 requests sqlalchemy psycopg2-binary pytest pytest-cov
     volumes:
       - ./dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
       - ./plugins:/opt/airflow/plugins
       - ./scripts:/opt/airflow/scripts
+      - ./tests:/opt/airflow/tests  # <--- LE PONT POUR TES TESTS
     command: scheduler
 
 volumes:
